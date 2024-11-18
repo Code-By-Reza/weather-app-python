@@ -1,0 +1,56 @@
+import requests
+
+# Function to get weather data for a given city
+def get_weather(city, api_key):
+    """
+    This function fetches weather information for a given city using OpenWeatherMap API.
+    It returns temperature, weather description, humidity, and wind speed.
+    """
+    # Construct the URL to fetch data from OpenWeatherMap API
+    url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
+    
+    # Making the request to the API
+    response = requests.get(url)
+    
+    # If the response is successful, status code 200
+    if response.status_code == 200:
+        data = response.json()  # Parse the response into JSON format
+        
+        # Extracting the necessary information from the response
+        temperature = data['main']['temp']
+        weather = data['weather'][0]['description']
+        humidity = data['main']['humidity']
+        wind_speed = data['wind']['speed']
+        
+        # Returning the weather information
+        return f"Weather in {city}:\nTemperature: {temperature}°C\nWeather: {weather}\nHumidity: {humidity}%\nWind Speed: {wind_speed} m/s"
+    
+    # If city is not found or API key is wrong, display error based on status code
+    else:
+        # Checking if city is not found (404 error)
+        if response.status_code == 404:
+            return f"Error: City '{city}' not found. Please check the city name."
+        # Handling other types of errors (e.g., API key issues or server errors)
+        elif response.status_code == 401:
+            return "Error: Invalid API key. Please check your API key."
+        else:
+            return f"Error: Unable to fetch weather data. HTTP Status Code: {response.status_code}"
+
+# Main function to run the app
+def main():
+    """
+    This function asks the user for the city name and displays the weather information.
+    """
+    # Ask the user to enter the city name
+    city = input("Enter the city name: ")
+    
+    # Replace with your actual API key from OpenWeatherMap
+    api_key = "your_api_key_here"
+    
+    # Calling the get_weather function and printing the result
+    weather_info = get_weather(city, api_key)
+    print(weather_info)
+
+# Running the main function
+if __name__ == "__main__":
+    main()
